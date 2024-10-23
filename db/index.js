@@ -12,5 +12,11 @@ class DB {
         });
         return this._instance;
     }
+    static initModel() {
+        const Tree = require('./tree');
+        const Person = require('./person');
+        Person.belongsTo(Tree, {as:"tree", foreignKey: "tree_id"});
+        Person.belongsTo(Person, {as:"inviter", foreignKey: "invited_by_id"});
+    }
 }
 module.exports = DB;

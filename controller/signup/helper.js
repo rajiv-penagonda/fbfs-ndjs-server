@@ -3,8 +3,6 @@ let db = require('../../db');
 let User = require('../../db/user');
 let Tree = require('../../db/tree');
 let Person = require('../../db/person');
-let Membership = require('../../db/Membership');
-Membership.belongsTo(Person, {foreignKey: "person_id"});
 let IDGen = require('../../db/id_gen');
 let util = require('../../common/util');
 let store = db.getInstance();
@@ -98,15 +96,10 @@ class SignupHelper {
             rec1 = r1;
             return trn.commit();
         }).then(()=>{
-            Person = store.define('person', {
-                    user_id: {
-                        type: DataTypes.STRING(12),
-                    },
-                },{
-                    schema: 'fbfs',
-                    timestamps: false,
-                    freezeTableName: true,
-                }
+            Person = store.define(
+                'person',
+                {user_id: {type: DataTypes.STRING(12)}},
+                {schema: 'fbfs',timestamps: false,freezeTableName: true}
             );
             return Person.update({user_id:ids[0].id},{where:{id:personId}});
         }).then(()=>{

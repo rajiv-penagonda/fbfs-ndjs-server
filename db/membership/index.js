@@ -23,10 +23,6 @@ module.exports = store.define(
             allowNull: false,
             primaryKey: true
         },
-        invited_by_id: {
-            type: DataTypes.STRING(12),
-            allowNull: false,
-        },
         type: {
             type: DataTypes.STRING(10),
             allowNull: false,
@@ -34,6 +30,10 @@ module.exports = store.define(
         invited_by_id: {
             type: DataTypes.STRING(12),
             allowNull: false,
+            references: {
+                model: Person,
+                key: 'id',
+            },
         },
         created_by_id: {
             type: DataTypes.STRING(12),

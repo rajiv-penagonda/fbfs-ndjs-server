@@ -7,7 +7,7 @@ class Util {
         return true;
     }
     ifNotFilled(param, alt) {
-        return isFilled(param) ? param : alt;
+        return this.isFilled(param) ? param : alt;
     }
 }
 module.exports = new Util();

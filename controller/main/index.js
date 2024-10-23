@@ -13,6 +13,7 @@ class MainController {
         let store = db.getInstance();
         if(process.argv.length >= 4) {
             store.authenticate().then((params)=>{
+                db.initModel();
                 console.log('db connection established');
                 process.on('SIGINT', () => {
                     store.close();
