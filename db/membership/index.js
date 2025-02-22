@@ -27,7 +27,7 @@ module.exports = store.define(
             type: DataTypes.STRING(10),
             allowNull: false,
         },
-        invited_by_id: {
+        invited_by_person_id: {
             type: DataTypes.STRING(12),
             allowNull: false,
             references: {

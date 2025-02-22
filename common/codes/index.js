@@ -1,4 +1,20 @@
-module.exports = {
+const codesJSON = {
+    success: {
+        code: '100',
+        message: "Operation successful.",
+    },
+    session_expired: {
+        code: '107',
+        message: "Auth failed - Session is invalid or user has logged out.",
+    },
+    invalid_body: {
+        code: '400',
+        message: "Request body is invalid",
+    },
+    unrecognized_endpoint: {
+        code: '108',
+        message: "Aarg! no man's land",
+    },
     unexpected_failure: {
         code: '419',
         message: 'Unexpected system failure. Please contact support - ',
@@ -21,14 +37,40 @@ module.exports = {
     },
     invalid_input_req_fields_missing1: {
         code: '424',
-        message: 'Invalid input. Mandatory fields: givenName,gender,phone or email',
-    },
-    invalid_input_req_fields_missing2: {
-        code: '425',
-        message: 'Invalid input. If id is specified treeId must be specified as well (vice-vesa)',
+        message: 'Invalid input. Mandatory fields: username,password,givenName,gender,phone or email',
     },
     invalid_input_req_fields_missing3: {
-        code: '426',
+        code: '425',
         message: 'Invalid input. Mandatory fields: phone or email',
     },
+    signup_success: {
+        code: '426',
+        message: 'Signup completed successfully.',
+    },
+    invalid_input_req_username_missing: {
+        code: '427',
+        message: 'Invalid input. Mandatory fields: username',
+    },
+    invalid_input_req_code_missing: {
+        code: '427',
+        message: 'Invalid input. Mandatory fields: username,code',
+    },
+    code_verification_failed: {
+        code: '429',
+        message: 'Code verification failed',
+    },
+    auth_header_missing: {
+        code: '430',
+        message: 'Authorization header parameter is missing or does not have creds in it.',
+    },
 }
+class Codes {
+    static _codeMap;
+    static get(key) {
+        if(!this._codeMap) {
+            this._codeMap = new Map(Object.entries(codesJSON));
+        }
+        return this._codeMap.get(key);
+    }
+}
+module.exports = Codes;

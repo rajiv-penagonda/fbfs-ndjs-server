@@ -5,29 +5,32 @@ let Tree = require('../../db/tree');
 let Person = require('../../db/person');
 let IDGen = require('../../db/id_gen');
 let util = require('../../common/util');
+let codes = require('../../common/codes');
+const ac = require('../../controller/auth');
 let store = db.getInstance();
 class SignupHelper {
-    onFailure(e, res, t, sCode) {
+    onFailure(e, res, t) {
         t.rollback().then(()=>{
-            let msg = e.errors?.length > 0 ? e.errors[0].message : 'Unexpected failure. Contact support - ' + e;
-            if(sCode == undefined) {
-                res.status(500).json({message: msg});
+            const c = codes.get('unexpected_failure');
+            if(e.errors?.length > 0) {
+                res.status(500).json({code:c.code,message:c.message + e.errors[0].message});
             }
             else {
-                res.status(sCode).json({message: msg});
+                res.status(500).json({code:c.code,message:c.message + e});
             }
         });
     }
-    registerNew(uname, req, res) {
+    registerNew(req, res) {
         let allIDs = [];
         let trn, rec1, rec2, rec3;
+        const creds = ac.getCreds(req);
         store.transaction().then((t)=>{
             trn = t;
             return IDGen.bulkCreate([{entity:'user'},{entity:'tree'},{entity:'person'}],{transaction: t});
         }).then((ids)=>{
             allIDs = ids;
             const userData = {
-                username:uname,
+                username:creds.username,
                 status:'active',
                 created_by_id:ids[0].id,
                 modified_by_id:ids[0].id,
@@ -48,7 +51,7 @@ class SignupHelper {
                 given_name: req.body.person.givenName,
                 surname: req.body.person.surname,
                 nicknames:req.body.person.nickNames,
-                birth_date: new Date(req.body.person.birthDate),
+                birth_date: (util.isFilled(req.body.person.birthDate) ? new Date(req.body.person.birthDate) : null),
                 lives_in: req.body.person.livesIn,
                 phone: req.body.person.phone,
                 email: req.body.person.email,
@@ -65,19 +68,16 @@ class SignupHelper {
             rec3 = r3;
             return trn.commit();
         }).then(()=>{
-            res.json({ message: 'Signup complete',ids:ids,user:rec1,person:rec3,tree:rec2});
+            //res.json({ message: 'Signup complete',ids:ids,user:rec1,person:rec3,tree:rec2});
+            res.json({...codes.get('signup_success')});
         }).catch((e)=>{
-            if(e.name == 'SequelizeUniqueConstraintError') {
-                this.onFailure(e, res, trn, 400);
-            }
-            else {
-                this.onFailure(e, res, trn);
-            }
+            this.onFailure(e, res, trn);
         });
     }
-    registerExisting(uname, req, res) {
+    registerExisting(req, res) {
         let trn, rec1;
         let allIDs = [];
+        const creds = ac.getCreds(req);
         let personId = req.body.person.id;
         store.transaction().then((t)=>{
             trn = t;
@@ -85,7 +85,7 @@ class SignupHelper {
         }).then((ids)=>{
             allIDs = ids;
             const userData = {
-                username:uname,
+                username:creds.username,
                 status:'active',
                 created_by_id:ids[0].id,
                 modified_by_id:ids[0].id,
@@ -96,21 +96,11 @@ class SignupHelper {
             rec1 = r1;
             return trn.commit();
         }).then(()=>{
-            Person = store.define(
-                'person',
-                {user_id: {type: DataTypes.STRING(12)}},
-                {schema: 'fbfs',timestamps: false,freezeTableName: true}
-            );
-            return Person.update({user_id:ids[0].id},{where:{id:personId}});
+            return Person.update({user_id:allIDs[0].id,membership_status:'Active'},{where:{id:personId}});
         }).then(()=>{
-            res.json({ message: 'Signup complete',ids:allIDs,user:rec1});
+            res.json({...codes.get('signup_success')});
         }).catch((e)=>{
-            if(e.name == 'SequelizeUniqueConstraintError') {
-                this.onFailure(e, res, trn, 400);
-            }
-            else {
-                this.onFailure(e, res, trn);
-            }
+            this.onFailure(e, res, trn);
         });
     }
 }
