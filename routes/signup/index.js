@@ -7,7 +7,7 @@ router.post('/', function(req, res, next) {
             case 'check':
                 sc.check(req, res, next);
             break;
-            case 'reg':
+            case 'register':
                 sc.register(req, res, next);
             break;
             default:
