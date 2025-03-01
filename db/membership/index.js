@@ -5,6 +5,10 @@ let store = db.getInstance();
 module.exports = store.define(
     'membership',
     {
+        id: {
+            type: DataTypes.STRING(12),
+            primaryKey: true,
+        },
         person_id: {
             type: DataTypes.STRING(12),
             allowNull: false,

@@ -39,7 +39,7 @@ module.exports = store.define(
             type: DataTypes.STRING(70),
         },
         bio: {
-            type: DataTypes.STRING(2500),
+            type: DataTypes.STRING(6000),
         },
         created_by_id: {
             type: DataTypes.STRING(12),
@@ -57,22 +57,9 @@ module.exports = store.define(
             type: DataTypes.STRING(12),
             primaryKey: true,
         },
-        membership_status: {
-            type: DataTypes.STRING(10),
-        },
-        membership_type: {
-            type: DataTypes.STRING(10),
-        },
-        invited_by_id: {
-            type: DataTypes.STRING(12),
-            primaryKey: true,
-        },
-        invited_on: {
-            type: DataTypes.DATE(6),
-        },
-        responded_to_invite_on: {
-            type: DataTypes.DATE(6),
-        },
+        sub_tree_json: {
+            type: DataTypes.JSON,
+        }
     },
     {
         schema: 'fbfs',

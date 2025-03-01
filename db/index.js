@@ -15,8 +15,13 @@ class DB {
     static initModel() {
         const Tree = require('./tree');
         const Person = require('./person');
+        const Membership = require('./membership');
+        const User = require('./user');
         Person.belongsTo(Tree, {as:"tree", foreignKey: "tree_id"});
-        Person.belongsTo(Person, {as:"inviter", foreignKey: "invited_by_id"});
+        Membership.belongsTo(Person, {as:"inviter", foreignKey: "invited_by_person_id"});
+        Membership.belongsTo(Person, {as:"person", foreignKey: "person_id"});
+        Membership.belongsTo(Tree, {as:"tree", foreignKey: "tree_id"});
+        Membership.belongsTo(User, {as:"creator", foreignKey: "created_by_id"});
     }
 }
 module.exports = DB;

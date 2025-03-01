@@ -4,6 +4,9 @@ let store = db.getInstance();
 module.exports = store.define(
     'user',
     {
+        name: {
+            type: DataTypes.STRING(60),
+        },
         username: {
             type: DataTypes.STRING(50),
             allowNull: false,
